@@ -11,4 +11,4 @@ print("SMOG",1.043*math.sqrt(complexWords*(30/sentences))+3.1291)
 print("Gunning fog index",0.4*((words/sentences)+100*(complexWords/words)))
 print("Flesch–Kincaid",206.835-1.015*(words/sentences)-84.6*(syllables/words))
 print("LIX",words/sentences+(longWords*100)/words)
-#Test pleaes work now
+#Test pleaes work now 2
