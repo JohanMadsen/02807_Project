@@ -12,7 +12,7 @@ def textAnalyzer(text):
     wordLengthCount=0
     for c in text:
         if c==" ":
-            syllablesInWord=syll(word)
+            syllablesInWord=syll(word.lower())
             syllables+=syllablesInWord
             if syllablesInWord>2:
                 complexWords+=1
@@ -26,6 +26,14 @@ def textAnalyzer(text):
         else:
             wordLengthCount+=1
             word+=c
+    syllablesInWord = syll(word.lower())
+    syllables += syllablesInWord
+    if syllablesInWord > 2:
+        complexWords += 1
+    if wordLengthCount > 6:
+        longWords += 1
+
+    print(words,sentences,longWords,syllables,complexWords)
     SMOG=1.043*math.sqrt(complexWords*(30/sentences))+3.1291
     GFI=0.4*((words/sentences)+100*(complexWords/words))
     FK=206.835-1.015*(words/sentences)-84.6*(syllables/words)
@@ -38,8 +46,8 @@ words=len(text.split())
 sentences=text.count(".")
 longWords=sum(len(x)>6 for x in text.split())
 syll = lambda w: len(''.join(" x"[c in "aeiouy"] for c in (w[:-1] if 'e' == w[-1] else w)).split())
-syllables=sum(syll(x) for x in text.split())
-complexWords=sum(syll(x)>2 for x in text.split())
+syllables=sum(syll(x.lower()) for x in text.split())
+complexWords=sum(syll(x.lower())>2 for x in text.split())
 
 
 print(words,sentences,longWords,syllables,complexWords)
