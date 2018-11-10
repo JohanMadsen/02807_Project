@@ -3,7 +3,7 @@ from mrjob.job import MRStep
 import mrjob
 import math
 import numpy as np
-
+#need a lot of work
 #def dist(x, y):
 #    return math.fabs(x, y)
 
