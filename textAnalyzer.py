@@ -1,6 +1,5 @@
 import math
 def textAnalyzer(text):
-    syll = lambda w: len(''.join(" x"[c in "aeiouy"] for c in (w[:-1] if 'e' == w[-1] else w)).split())
     if len(text)==0:
         return -1,-1,-1,-1
     vowels = 'aeiouy'
@@ -8,8 +7,7 @@ def textAnalyzer(text):
     sentences=0
     longWords=0
     complexWords=0
-    syllables=0
-    word=""
+    syllables=0f
     wordLengthCount=0
     syllablesInWord=0
     lastChar=""
@@ -27,7 +25,6 @@ def textAnalyzer(text):
             wordLengthCount=0
             syllablesInWord=0
             words+=1
-            word=""
         elif c==".":
             sentences+=1
         else:
@@ -35,7 +32,6 @@ def textAnalyzer(text):
                 syllablesInWord+=1
             wordLengthCount+=1
             lastChar=c
-            word+=c
             if wordLengthCount==1 and c in vowels:
                 syllablesInWord+=1
     if lastChar == "e":
