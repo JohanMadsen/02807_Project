@@ -45,7 +45,8 @@ def textAnalyzer(text):
         complexWords += 1
     if wordLengthCount > 6:
         longWords += 1
-
+    if sentences==0:
+        return -1,-1,-1,-1
     #print(words,sentences,longWords,syllables,complexWords)
     SMOG=1.043*math.sqrt(complexWords*(30/sentences))+3.1291
     GFI=0.4*((words/sentences)+100*(complexWords/words))
