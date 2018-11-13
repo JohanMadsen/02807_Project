@@ -96,4 +96,4 @@ def calcScoresForFile(filename):
     #print(time.time()-t)
     return topics,sql_ids
     
-topics,sql_ids=calcScoresForFile('C:/Users/peter/Desktop/wiki_00.txt')
+topics,sql_ids=calcScoresForFile('wiki_00.txt')

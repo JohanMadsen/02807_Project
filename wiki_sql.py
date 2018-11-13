@@ -31,10 +31,10 @@ create()
 
 from wiki_text import calcScoresForFile,textAnalyzer
 
-topics,sql_ids=calcScoresForFile('C:/Users/peter/Desktop/wiki_00.txt')
+topics,sql_ids=calcScoresForFile('wiki_00.txt')
 n=len(sql_ids)
 scores=[]
-for sql_id,topic in sql_ids,topics:
+for sql_id,topic in zip(sql_ids,topics):
     score=textAnalyzer(topic)
     insert(int(sql_id[0]), sql_id[2], sql_id[1], score[0], score[1], score[2], score[3])
 conn.commit()

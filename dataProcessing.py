@@ -60,10 +60,9 @@ def textAnalyzer(text):
     return SMOG, GFI, FK, LIX
 
 
-def preProcessing(filename):
-    with open(filename, 'r', encoding='utf8') as f:
+def preProcessing(dir,filename):
+    with open(dir+filename, 'r', encoding='utf8') as f:
         lines = f.readlines()
-    # devide=lines.split('[[')
     no_backslash = []
     for i in range(len(lines)):
         if not lines[i].split('\n')[0] == '':
@@ -87,9 +86,10 @@ def preProcessing(filename):
     return topics, sql_ids
 
 
-def insert(c,ids,name,url,s1,s2,s3,s4):
+def insert(c,db,ids,name,url,s1,s2,s3,s4):
     # Insert a row of data
-    c.execute("INSERT INTO Wiki VALUES (?,?,?,?,?,?,?,NULL)",(ids,name,url,s1,s2,s3,s4))
+    db.execute("INSERT INTO Wiki VALUES (?,?,?,?,?,?,?,NULL)",(ids,name,url,s1,s2,s3,s4))
+    #db.commit()
 
 class DataProcessing(MRJob):
     OUTPUT_PROTOCOL = mrjob.protocol.RawProtocol
@@ -98,23 +98,24 @@ class DataProcessing(MRJob):
         #Define input file, output file and number of iteration
         super(DataProcessing, self).configure_options()
         self.add_file_option('--database')
+        self.add_passthru_arg('--d')
     def mapper(self, _, line):
-        lines=line.split("\n")
-        for l in lines:
-            yield l, _
+        yield line, None
 
     def reducer_init(self):
         # make sqlite3 database available to reducer
         self.sqlite_conn = sqlite3.connect(self.options.database)
-        self.c=self.sqlite_conn..cursor()
+        self.c=self.sqlite_conn.cursor()
 
 
     def reducer(self, fileName, _):
-        topics, sql_ids = preProcessing(fileName)
-        for sql_id, topic in sql_ids, topics:
+        topics, sql_ids = preProcessing(self.options.d,fileName)
+
+        for sql_id, topic in zip(sql_ids, topics):
             score = textAnalyzer(topic)
-            insert(self.c,int(sql_id[0]), sql_id[2], sql_id[1], score[0], score[1], score[2], score[3])
+            insert(self.c,self.sqlite_conn,int(sql_id[0]), sql_id[2], sql_id[1], score[0], score[1], score[2], score[3])
         self.sqlite_conn.commit()
+        self.sqlite_conn.close()
         print(fileName)
         yield None, None
 if __name__ == '__main__':
