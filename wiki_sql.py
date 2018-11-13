@@ -34,11 +34,10 @@ from wiki_text import calcScoresForFile,textAnalyzer
 topics,sql_ids=calcScoresForFile('C:/Users/peter/Desktop/wiki_00.txt')
 n=len(sql_ids)
 scores=[]
-for j in range(n):
-    scores.append(textAnalyzer(topics[j]))
-for i in range(n):
-    insert(int(sql_ids[i][0]),sql_ids[i][2],sql_ids[i][1],scores[i][0],scores[i][1],scores[i][2],scores[i][3])    
-    conn.commit()
+for sql_id,topic in sql_ids,topics:
+    score=textAnalyzer(topic)
+    insert(int(sql_id[0]), sql_id[2], sql_id[1], score[0], score[1], score[2], score[3])
+conn.commit()
 
 #print all the stuff we have
 #select()

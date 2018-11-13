@@ -59,19 +59,24 @@ def textAnalyzer(text):
     LIX = words / sentences + (longWords * 100) / words
     return SMOG, GFI, FK, LIX
 
-def calcPointsForFile(filename):
-    with open(os.path.dirname(os.path.realpath(__file__))+filename, 'r', encoding='utf8') as f:
+
+def preProcessing(filename):
+    with open(filename, 'r', encoding='utf8') as f:
         lines = f.readlines()
+    # devide=lines.split('[[')
     no_backslash = []
     for i in range(len(lines)):
         if not lines[i].split('\n')[0] == '':
             no_backslash.append(lines[i].split('\n')[0])
 
+    sql_ids = [[no_backslash[0].split('"')[1], no_backslash[0].split('"')[3], no_backslash[0].split('"')[5]]]
     topics = [no_backslash[2]]
     topic_count = 0
     j = 2
     while j < len(no_backslash) - 1:
         if no_backslash[j][0:10] == '</doc>':
+            temp = no_backslash[j + 1].split('"')
+            sql_ids.append([temp[1], temp[3], temp[5]])
             j += 3
             topics.append(no_backslash[j])
             topic_count += 1
@@ -79,28 +84,37 @@ def calcPointsForFile(filename):
         else:
             topics[topic_count] += no_backslash[j]
             j += 1
-    for i in range(0, len(topics)):
-        textAnalyzer(topics[i])
+    return topics, sql_ids
+
+
+def insert(c,ids,name,url,s1,s2,s3,s4):
+    # Insert a row of data
+    c.execute("INSERT INTO Wiki VALUES (?,?,?,?,?,?,?,NULL)",(ids,name,url,s1,s2,s3,s4))
 
 class DataProcessing(MRJob):
     OUTPUT_PROTOCOL = mrjob.protocol.RawProtocol
 
-    #def configure_options(self):
-    #    #Define input file, output file and number of iteration
-    #    super(DataProcessing, self).configure_options()
-    #    self.add_file_option('--database')
+    def configure_options(self):
+        #Define input file, output file and number of iteration
+        super(DataProcessing, self).configure_options()
+        self.add_file_option('--database')
     def mapper(self, _, line):
         lines=line.split("\n")
         for l in lines:
             yield l, _
 
-    #def reducer_init(self):
-    #    # make sqlite3 database available to reducer
-    #    self.sqlite_conn = sqlite3.connect(self.options.database)
+    def reducer_init(self):
+        # make sqlite3 database available to reducer
+        self.sqlite_conn = sqlite3.connect(self.options.database)
+        self.c=self.sqlite_conn..cursor()
 
 
     def reducer(self, fileName, _):
-        calcPointsForFile(fileName)
+        topics, sql_ids = preProcessing(fileName)
+        for sql_id, topic in sql_ids, topics:
+            score = textAnalyzer(topic)
+            insert(self.c,int(sql_id[0]), sql_id[2], sql_id[1], score[0], score[1], score[2], score[3])
+        self.sqlite_conn.commit()
         print(fileName)
         yield None, None
 if __name__ == '__main__':
