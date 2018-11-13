@@ -66,7 +66,7 @@ def textAnalyzer(text):
 
 
   # do your stuff
-def calcPointsForFile(filename):
+def calcScoresForFile(filename):
     t=time.time()
     with open(filename,'r', encoding='utf8') as f:
         lines = f.readlines()
@@ -75,12 +75,15 @@ def calcPointsForFile(filename):
     for i in range(len(lines)):
         if not lines[i].split('\n')[0]=='':
             no_backslash.append(lines[i].split('\n')[0])
-            
+    
+    sql_ids=[[no_backslash[0].split('"')[1],no_backslash[0].split('"')[3],no_backslash[0].split('"')[5]]]        
     topics=[no_backslash[2]]
     topic_count=0
     j=2
     while j<len(no_backslash)-1:
         if no_backslash[j][0:10]=='</doc>':
+            temp=no_backslash[j+1].split('"')
+            sql_ids.append([temp[1],temp[3],temp[5]])
             j+=3
             topics.append(no_backslash[j])
             topic_count+=1
@@ -88,8 +91,9 @@ def calcPointsForFile(filename):
         else:
             topics[topic_count]+=no_backslash[j]
             j+=1
-    for i in range(0,len(topics)):
-        print(textAnalyzer(topics[i]))
-    print(time.time()-t)
-
-calcPointsForFile('C:/Users/peter/Downloads/wikipedia.txt.dump.20140615-en.SZTAKI/wiki_00.txt')
+    #for i in range(0,len(topics)):
+    #    (textAnalyzer(topics[i]))
+    #print(time.time()-t)
+    return topics,sql_ids
+    
+topics,sql_ids=calcScoresForFile('C:/Users/peter/Desktop/wiki_00.txt')
