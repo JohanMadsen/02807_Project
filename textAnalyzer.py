@@ -4,6 +4,7 @@ def textAnalyzer(text):
     if len(text)==0:
         return -1,-1,-1,-1
     vowels = 'aeiouy'
+    #
     words=1
     sentences=0
     longWords=0
