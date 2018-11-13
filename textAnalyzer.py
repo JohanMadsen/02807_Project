@@ -1,4 +1,5 @@
 import math
+
 def textAnalyzer(text):
     syll = lambda w: len(''.join(" x"[c in "aeiouy"] for c in (w[:-1] if 'e' == w[-1] else w)).split())
     if len(text)==0:
