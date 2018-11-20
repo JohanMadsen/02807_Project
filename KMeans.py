@@ -32,10 +32,11 @@ class KMeans(MRJob):
         centorids=centorids[:-1]
         #NEED TO READ WHOLE DATABASE HERE
         #LOOP OVER ALL POINTS HERE
-            for centroid in centorids:
+            #for centroid in centorids:
                 #YIELD (Cluster_ID,point) here
 
     def reducer(self, Cluster_ID, points):
+        print("hey")
         #CALCULATE NEW CENTROID GIVEN points
         #YIED NEW CENTROID
     def steps(self):
