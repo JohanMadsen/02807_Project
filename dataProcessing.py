@@ -48,7 +48,7 @@ def textAnalyzer(text):
         complexWords += 1
     if wordLengthCount > 6:
         longWords += 1
-    if sentences==0:
+    if sentences<5 or words<50:
         return -1,-1,-1,-1
     # print(words,sentences,longWords,syllables,complexWords)
     SMOG = 1.043 * math.sqrt(complexWords * (30 / sentences)) + 3.1291
@@ -89,9 +89,9 @@ def preProcessing(dir,filename):
 class DataProcessing(MRJob):
     OUTPUT_PROTOCOL = mrjob.protocol.RawProtocol
 
-    def configure_options(self):
+    def configure_args(self):
         #Define input file, output file and number of iteration
-        super(DataProcessing, self).configure_options()
+        super(DataProcessing, self).configure_args()
         self.add_passthru_arg('--d')
     def mapper(self, _, line):
         yield line, None
@@ -106,7 +106,7 @@ class DataProcessing(MRJob):
 
         for sql_id, topic in zip(sql_ids, topics):
             score = textAnalyzer(topic)
-            s=str(sql_id[0])+" "+str(sql_id[2])+" "+str(sql_id[1])+" "+str(score[0])+" "+str(score[1])+" "+str(score[2])+" "+str(score[3])
+            s=str(sql_id[0])+"¤"+str(sql_id[2])+"¤"+str(sql_id[1])+"¤"+str(score[0])+"¤"+str(score[1])+"¤"+str(score[2])+"¤"+str(score[3])
             yield None,s
 if __name__ == '__main__':
     DataProcessing.run()
