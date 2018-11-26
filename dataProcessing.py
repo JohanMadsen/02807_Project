@@ -106,7 +106,8 @@ class DataProcessing(MRJob):
 
         for sql_id, topic in zip(sql_ids, topics):
             score = textAnalyzer(topic)
-            s=str(sql_id[0])+"¤"+str(sql_id[2])+"¤"+str(sql_id[1])+"¤"+str(score[0])+"¤"+str(score[1])+"¤"+str(score[2])+"¤"+str(score[3])
-            yield None,s
+            if score[0]!=-1:
+                s=str(sql_id[0])+"¤"+str(sql_id[2])+"¤"+str(sql_id[1])+"¤"+str(score[0])+"¤"+str(score[1])+"¤"+str(score[2])+"¤"+str(score[3])
+                yield None,s
 if __name__ == '__main__':
     DataProcessing.run()

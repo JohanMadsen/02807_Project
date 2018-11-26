@@ -4,9 +4,9 @@ import mrjob
 import sqlite3
 import math
 import numpy as np
-#need a lot of work
-#def dist(x, y):
-#    return math.fabs(x, y)
+
+def dist(P,C):
+    return sum([abs(p - float(c)) ** 2 for p,c in zip(P, C)])
 
 class KMeans(MRJob):
     OUTPUT_PROTOCOL = mrjob.protocol.RawProtocol
@@ -30,15 +30,33 @@ class KMeans(MRJob):
     def mapper(self, _, line):
         centorids=line.split("¤")
         centorids=centorids[:-1]
-        #NEED TO READ WHOLE DATABASE HERE
-        #LOOP OVER ALL POINTS HERE
-            #for centroid in centorids:
-                #YIELD (Cluster_ID,point) here
+        #points=self.c.execute("SELECT score1/((SELECT max(score1) from Wiki)-(SELECT min(score1) from Wiki)),score2/((SELECT max(score2) from Wiki)-(SELECT min(score2) from Wiki)),score3/((SELECT max(score3) from Wiki)-(SELECT min(score3) from Wiki)),score4/((SELECT max(score4) from Wiki)-(SELECT min(score4) from Wiki)) from Wiki")
+        points=self.c.execute("SELECT (score1-(SELECT min(score1) from Wiki))/((SELECT max(score1) from Wiki)-(SELECT min(score1) from Wiki)),(score2-(SELECT min(score2) from Wiki))/((SELECT max(score2) from Wiki)-(SELECT min(score2) from Wiki)),(score3-(SELECT min(score3) from Wiki))/((SELECT max(score3) from Wiki)-(SELECT min(score3) from Wiki)),(score4-(SELECT min(score4) from Wiki))/((SELECT max(score4) from Wiki)-(SELECT min(score4) from Wiki)) from Wiki")
+        for point in points:
+            min=-1
+            mindist=1000000000
+            d=0
+            for i in range(len(centorids)):
+                d=dist(point,centorids[i].split(","))
+                if d<mindist:
+                    mindist=d
+                    min=i
+            yield min,point
 
     def reducer(self, Cluster_ID, points):
-        print("hey")
-        #CALCULATE NEW CENTROID GIVEN points
-        #YIED NEW CENTROID
+        points = list(points)
+        n = len(points)
+        centroid = [0,0,0,0]
+        for point in points:
+            for i in range(len(point)):
+                centroid[i]+=point[i]
+        centroid = [c/n for c in centroid]
+        s=""
+        for c in centroid:
+            s+=str(c)
+            s+=","
+        s=s[:-1]
+        yield None,s
     def steps(self):
         return [MRStep(mapper=self.mapper_loader,reducer=self.reducer_loader),
                        MRStep(mapper_init=self.mapper_init,mapper=self.mapper,reducer=self.reducer)
