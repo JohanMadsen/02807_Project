@@ -29,14 +29,19 @@ for point in points:
             min = i
     cursor.execute("UPDATE WIKI set cluster_id=? WHERE ID=?",(min,point[0]))
 conn.commit()
-
+try:
+    cursor.execute("CREATE TABLE clusters(ID INTEGER PRIMARY KEY,score1 real,score2 real,score3 real,score4 real, sumScore real)")
+except:
+    pass
 count=0
-for cen in centroids:
+for i in range(len(centroids)):
+    cen=centroids[i]
     sum = 0
-    for i in range(len(cen)):
+    for j in range(len(cen)):
         if i==2:
-            sum+=1-float(cen[i])
+            sum+=1-float(cen[j])
         else:
-            sum+=float(cen[i])
-    print(count,sum)
+            sum+=float(cen[j])
+    cursor.execute("INSERT INTO clusters VALUES(?,?,?,?,?,?)",(i,float(cen[0]),float(cen[1]),float(cen[2]),float(cen[3]),sum))
     count+=1
+conn.commit()

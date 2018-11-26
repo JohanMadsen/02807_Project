@@ -1,4 +1,4 @@
-n=1000
+n=100
 file = open("Centroid.txt", "w")
 for i in range(n):
     s=""

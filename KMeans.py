@@ -45,18 +45,17 @@ class KMeans(MRJob):
     def reducer(self, Cluster_ID, points):
         points = list(points)
         n = len(points)
-        if n>50:
-            centroid = [0,0,0,0]
-            for point in points:
-                for i in range(len(point)):
-                    centroid[i]+=point[i]
-            centroid = [c/n for c in centroid]
-            s=""
-            for c in centroid:
-                s+=str(c)
-                s+=","
-            s=s[:-1]
-            yield None,s
+        centroid = [0,0,0,0]
+        for point in points:
+            for i in range(len(point)):
+                centroid[i]+=point[i]
+        centroid = [c/n for c in centroid]
+        s=""
+        for c in centroid:
+            s+=str(c)
+            s+=","
+        s=s[:-1]
+        yield None,s
     def steps(self):
         return [MRStep(mapper=self.mapper_loader,reducer=self.reducer_loader),
                        MRStep(mapper_init=self.mapper_init,mapper=self.mapper,reducer=self.reducer)
