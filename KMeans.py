@@ -28,16 +28,16 @@ class KMeans(MRJob):
         self.sqlite_conn = sqlite3.connect(self.options.database)
         self.c = self.sqlite_conn.cursor()
     def mapper(self, _, line):
-        centorids=line.split("¤")
-        centorids=centorids[:-1]
+        centroids=line.split("¤")
+        centroids=centroids[:-1]
         #points=self.c.execute("SELECT score1/((SELECT max(score1) from Wiki)-(SELECT min(score1) from Wiki)),score2/((SELECT max(score2) from Wiki)-(SELECT min(score2) from Wiki)),score3/((SELECT max(score3) from Wiki)-(SELECT min(score3) from Wiki)),score4/((SELECT max(score4) from Wiki)-(SELECT min(score4) from Wiki)) from Wiki")
         points=self.c.execute("SELECT (score1-(SELECT min(score1) from Wiki))/((SELECT max(score1) from Wiki)-(SELECT min(score1) from Wiki)),(score2-(SELECT min(score2) from Wiki))/((SELECT max(score2) from Wiki)-(SELECT min(score2) from Wiki)),(score3-(SELECT min(score3) from Wiki))/((SELECT max(score3) from Wiki)-(SELECT min(score3) from Wiki)),(score4-(SELECT min(score4) from Wiki))/((SELECT max(score4) from Wiki)-(SELECT min(score4) from Wiki)) from Wiki")
         for point in points:
             min=-1
             mindist=1000000000
             d=0
-            for i in range(len(centorids)):
-                d=dist(point,centorids[i].split(","))
+            for i in range(len(centroids)):
+                d=dist(point,centroids[i].split(","))
                 if d<mindist:
                     mindist=d
                     min=i
