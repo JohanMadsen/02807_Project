@@ -1,7 +1,7 @@
 import os.path
 
-n = 100 # This many files
-path_name = '/'
+n = 248 # This many files
+path_name = '/Data/Dataset1/'
 filesPerDir = 100
 
 def dirnameFun(dir_index,path_name):
