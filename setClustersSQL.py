@@ -29,10 +29,7 @@ for point in points:
             min = i
     cursor.execute("UPDATE WIKI set cluster_id=? WHERE ID=?",(min,point[0]))
 conn.commit()
-try:
-    cursor.execute("CREATE TABLE clusters(ID INTEGER PRIMARY KEY,score1 real,score2 real,score3 real,score4 real, sumScore real)")
-except:
-    pass
+
 count=0
 for i in range(len(centroids)):
     cen=centroids[i]

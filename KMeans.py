@@ -59,7 +59,7 @@ class KMeans(MRJob):
     def steps(self):
         return [MRStep(mapper=self.mapper_loader,reducer=self.reducer_loader),
                        MRStep(mapper_init=self.mapper_init,mapper=self.mapper,reducer=self.reducer)
-                ] * 100#self.options.iterations
+                ] * 10
 
 if __name__ == '__main__':
     KMeans.run()
